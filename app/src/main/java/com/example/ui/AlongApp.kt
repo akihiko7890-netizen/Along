@@ -148,7 +148,10 @@ fun AlongApp(
                                 .weight(1f)
                                 .fillMaxHeight()
                         ) {
-                            PeacefulBackground(worldTheme = settings.selectedTheme)
+                            PeacefulBackground(
+                                worldTheme = settings.selectedTheme,
+                                animationQuality = settings.animationQuality
+                            )
 
                             Column(modifier = Modifier.fillMaxSize()) {
                                 // Tablet Top Bar Header
@@ -300,7 +303,10 @@ fun AlongApp(
                                 .consumeWindowInsets(innerPadding)
                         ) {
                             // Ambient peaceful canvas
-                            PeacefulBackground(worldTheme = settings.selectedTheme)
+                            PeacefulBackground(
+                                worldTheme = settings.selectedTheme,
+                                animationQuality = settings.animationQuality
+                            )
 
                             // Destination routing
                             AnimatedContent(

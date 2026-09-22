@@ -24,7 +24,7 @@ import com.example.data.model.*
         TimeCapsule::class,
         ChatMessage::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(AlongConverters::class)

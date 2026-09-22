@@ -68,12 +68,26 @@ fun MyWorldScreen(
         MyWorldDestination.BACKUP_RESTORE -> BackupRestoreView(viewModel)
         MyWorldDestination.ABOUT_ALONG -> AboutAlongView(viewModel)
         MyWorldDestination.COMPANION_CUSTOMIZE -> CompanionCustomizeView(viewModel)
+        MyWorldDestination.USER_GUIDE -> UserGuideScreen(
+            viewModel = viewModel,
+            onBack = { viewModel.navigateToMyWorld(MyWorldDestination.MENU) }
+        )
+        MyWorldDestination.GAME_ROOM -> GameRoomScreen(
+            viewModel = viewModel,
+            onBack = { viewModel.navigateToMyWorld(MyWorldDestination.MENU) }
+        )
     }
 }
 
 @Composable
 private fun MyWorldMenuView(viewModel: AlongViewModel) {
+    var showThemeAndAudioDialog by remember { mutableStateOf(false) }
+    val appSettings by viewModel.appSettings.collectAsState()
+    val companionProfile by viewModel.companionProfile.collectAsState()
+
     val modules = listOf(
+        WorldModuleItem(MyWorldDestination.USER_GUIDE, "Help & User Guide", "Complete guide for all features (offline)", "📖"),
+        WorldModuleItem(MyWorldDestination.GAME_ROOM, "Let's Play (Game Room)", "Chess, Tic-Tac-Toe & cozy mini-games", "🎮"),
         WorldModuleItem(MyWorldDestination.FINANCE, "Personal Finance", "Income, expenses, cash flow & budget", "💰"),
         WorldModuleItem(MyWorldDestination.GOALS, "Goals & Milestones", "Long-term dreams & achievements", "🎯"),
         WorldModuleItem(MyWorldDestination.HABITS, "Habits & Routines", "Consistency without guilt", "🌱"),
@@ -90,20 +104,48 @@ private fun MyWorldMenuView(viewModel: AlongViewModel) {
         WorldModuleItem(MyWorldDestination.ABOUT_ALONG, "About Along", "Created by Mr. Aye Chan Maung", "🌿")
     )
 
+    if (showThemeAndAudioDialog) {
+        com.example.ui.dialogs.ThemePreviewAndAudioDialog(
+            currentSettings = appSettings,
+            companionName = companionProfile.name,
+            onApplyTheme = { viewModel.updateWorldTheme(it) },
+            onUpdateAudio = { music, amb, mVol, aVol ->
+                viewModel.updateAudioSettings(music, amb, mVol, aVol)
+            },
+            onUpdateAnimationQuality = { viewModel.updateAnimationQuality(it) },
+            onDismiss = { showThemeAndAudioDialog = false }
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-        Column(modifier = Modifier.padding(top = 8.dp, bottom = 12.dp)) {
-            Text(
-                text = "My World",
-                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
-            )
-            Text(
-                text = "Your private sanctuary for life, dreams, memories, and finance.",
-                style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.secondary)
-            )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp, bottom = 12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "My World",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
+                )
+                Text(
+                    text = "Your private sanctuary for life, dreams, memories, and finance.",
+                    style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.secondary)
+                )
+            }
+            FilledTonalButton(
+                onClick = { showThemeAndAudioDialog = true },
+                shape = RoundedCornerShape(12.dp),
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+            ) {
+                Text("🎵 Atmosphere", fontSize = 12.sp)
+            }
         }
 
         LazyVerticalGrid(

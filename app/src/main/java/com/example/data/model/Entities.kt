@@ -285,5 +285,11 @@ data class AppSettings(
     val companionCanRememberSchedule: Boolean = true,
     val companionCanRememberFinance: Boolean = true,
     val companionCanRememberPeople: Boolean = true,
-    val selectedTheme: WorldTheme = WorldTheme.FOREST_MORNING
+    val selectedTheme: WorldTheme = WorldTheme.FOREST_MORNING,
+    val musicEnabled: Boolean = false,
+    val ambientSoundEnabled: Boolean = false,
+    val musicVolume: Float = 0.4f,
+    val ambientVolume: Float = 0.4f,
+    val animationQuality: String = "Full",
+    val dismissedTutorialHints: String = ""
 )

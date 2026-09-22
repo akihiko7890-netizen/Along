@@ -7,6 +7,7 @@ import com.example.data.db.AlongDatabase
 import com.example.data.model.*
 import com.example.data.repository.AlongRepository
 import com.example.data.repository.FinanceSummary
+import com.example.util.AlongAudioEngine
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -34,12 +35,15 @@ enum class MyWorldDestination {
     PRIVACY_DASHBOARD,
     BACKUP_RESTORE,
     ABOUT_ALONG,
-    COMPANION_CUSTOMIZE
+    COMPANION_CUSTOMIZE,
+    USER_GUIDE,
+    GAME_ROOM
 }
 
 class AlongViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: AlongRepository
+    val audioEngine = AlongAudioEngine(application)
 
     val userProfile: StateFlow<UserProfile>
     val companionProfile: StateFlow<CompanionProfile>
@@ -137,6 +141,18 @@ class AlongViewModel(application: Application) : AndroidViewModel(application) {
 
         viewModelScope.launch {
             repository.initializeDefaultDataIfEmpty()
+        }
+
+        viewModelScope.launch {
+            appSettings.collect { settings ->
+                audioEngine.updateSettings(
+                    musicOn = settings.musicEnabled,
+                    ambientOn = settings.ambientSoundEnabled,
+                    musicVol = settings.musicVolume,
+                    ambientVol = settings.ambientVolume,
+                    theme = settings.selectedTheme
+                )
+            }
         }
     }
 
@@ -527,5 +543,53 @@ class AlongViewModel(application: Application) : AndroidViewModel(application) {
             _backupStatus.value = if (success) "Restored successfully. Welcome back. 🌿" else "Restore failed: Invalid .along payload"
             onComplete(success)
         }
+    }
+
+    // Audio & Atmosphere Controls
+    fun updateAudioSettings(musicOn: Boolean, ambientOn: Boolean, musicVol: Float, ambientVol: Float) {
+        viewModelScope.launch {
+            val updated = appSettings.value.copy(
+                musicEnabled = musicOn,
+                ambientSoundEnabled = ambientOn,
+                musicVolume = musicVol,
+                ambientVolume = ambientVol
+            )
+            repository.saveAppSettings(updated)
+            audioEngine.updateSettings(musicOn, ambientOn, musicVol, ambientVol, updated.selectedTheme)
+        }
+    }
+
+    fun updateAnimationQuality(quality: String) {
+        viewModelScope.launch {
+            val updated = appSettings.value.copy(animationQuality = quality)
+            repository.saveAppSettings(updated)
+        }
+    }
+
+    // Tutorial Hints
+    fun dismissTutorialHint(key: String) {
+        viewModelScope.launch {
+            val current = appSettings.value.dismissedTutorialHints
+            val set = current.split(",").filter { it.isNotBlank() }.toMutableSet()
+            set.add(key)
+            val updated = appSettings.value.copy(dismissedTutorialHints = set.joinToString(","))
+            repository.saveAppSettings(updated)
+        }
+    }
+
+    fun resetTutorialHints() {
+        viewModelScope.launch {
+            val updated = appSettings.value.copy(dismissedTutorialHints = "")
+            repository.saveAppSettings(updated)
+        }
+    }
+
+    fun isTutorialDismissed(key: String): Boolean {
+        return appSettings.value.dismissedTutorialHints.split(",").contains(key)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        audioEngine.stop()
     }
 }

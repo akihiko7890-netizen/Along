@@ -285,6 +285,28 @@ fun CompanionScreen(
                         }
 
                         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                            // Game Room
+                            IconButton(
+                                onClick = {
+                                    viewModel.navigateTo(com.example.ui.MainDestination.MY_WORLD)
+                                    viewModel.navigateToMyWorld(com.example.ui.MyWorldDestination.GAME_ROOM)
+                                },
+                                modifier = Modifier.testTag("game_room_button")
+                            ) {
+                                Text(text = "🎮", fontSize = 18.sp)
+                            }
+
+                            // User Guide
+                            IconButton(
+                                onClick = {
+                                    viewModel.navigateTo(com.example.ui.MainDestination.MY_WORLD)
+                                    viewModel.navigateToMyWorld(com.example.ui.MyWorldDestination.USER_GUIDE)
+                                },
+                                modifier = Modifier.testTag("user_guide_button")
+                            ) {
+                                Icon(imageVector = Icons.Default.HelpOutline, contentDescription = "User Guide")
+                            }
+
                             // Quick Expression Changer
                             IconButton(
                                 onClick = { showExpressionPicker = !showExpressionPicker },
