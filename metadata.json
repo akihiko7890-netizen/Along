@@ -1,0 +1,6 @@
+{
+  "name": "Along",
+  "description": "Private offline life companion to preserve memories, track goals and finance, and grow with a personal companion. Created by Mr. Aye Chan Maung from Myanmar.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
