@@ -56,7 +56,6 @@ fun CompanionScreen(
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
-            .navigationBarsPadding()
             .imePadding()
     ) {
         val isTablet = maxWidth >= 600.dp

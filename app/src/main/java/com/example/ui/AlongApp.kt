@@ -55,7 +55,11 @@ fun AlongApp(
 
                 if (isTablet) {
                     // --- Tablet / Expanded Layout with Navigation Rail ---
-                    Row(modifier = Modifier.fillMaxSize()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .windowInsetsPadding(WindowInsets.systemBars)
+                    ) {
                         NavigationRail(
                             header = {
                                 Column(
@@ -252,6 +256,7 @@ fun AlongApp(
                 } else {
                     // --- Phone / Compact Layout with Bottom Bar ---
                     Scaffold(
+                        contentWindowInsets = WindowInsets.systemBars,
                         topBar = {
                             AlongTopBar(
                                 currentTheme = settings.selectedTheme,
@@ -292,6 +297,7 @@ fun AlongApp(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(innerPadding)
+                                .consumeWindowInsets(innerPadding)
                         ) {
                             // Ambient peaceful canvas
                             PeacefulBackground(worldTheme = settings.selectedTheme)
